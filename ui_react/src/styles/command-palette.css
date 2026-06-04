@@ -1,0 +1,112 @@
+.palette-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  z-index: 300;
+}
+
+.palette {
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 560px;
+  max-height: 70vh;
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  z-index: 301;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(255,255,255,0.04);
+  animation: fade-up 0.15s var(--ease-out);
+}
+
+.palette-search {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.palette-search-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.palette-input {
+  flex: 1;
+  font-size: 15px;
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.palette-input::placeholder {
+  color: var(--text-muted);
+}
+
+.palette-esc {
+  font-size: 10px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.palette-body {
+  max-height: calc(70vh - 56px);
+  overflow-y: auto;
+  padding: var(--gap-sm) 0;
+}
+
+.palette-section {
+  padding: var(--gap-xs) 0;
+}
+
+.palette-section-label {
+  padding: 6px 18px;
+  font-size: 10px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.palette-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  padding: 8px 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: left;
+  transition: background var(--duration-fast);
+}
+
+.palette-item:hover {
+  background: var(--glass-hover);
+  color: var(--text-primary);
+}
+
+.palette-item-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.palette-item-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.palette-item-hint {
+  margin-left: auto;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}

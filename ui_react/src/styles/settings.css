@@ -1,0 +1,336 @@
+/* Settings Panel Overlay */
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(6, 8, 12, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fade-in 150ms var(--ease-out);
+}
+
+[data-theme="light"] .settings-backdrop {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+.settings-panel {
+  position: fixed;
+  top: 52px;
+  right: 12px;
+  z-index: 501;
+  width: 420px;
+  max-height: calc(100vh - 72px);
+  background: var(--depth-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slide-down 200ms var(--ease-out);
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+
+@keyframes fade-in {
+  from { opacity: 0 }
+  to   { opacity: 1 }
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.settings-title {
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  flex: 1;
+}
+
+.settings-close {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-fast), background var(--duration-fast);
+}
+
+.settings-close:hover {
+  color: var(--text-primary);
+  background: var(--depth-2);
+}
+
+.settings-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* Section */
+.settings-section {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-section:last-child {
+  border-bottom: none;
+}
+
+.settings-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* Theme picker */
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 8px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
+  background: var(--depth-2);
+  transition: all var(--duration-fast) var(--ease-out);
+  cursor: pointer;
+}
+
+.theme-option:hover {
+  border-color: var(--border-active);
+  background: var(--depth-3);
+}
+
+.theme-option-active {
+  border-color: var(--signal-blue);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.theme-preview {
+  width: 100%;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.theme-preview-z {
+  background: #06080c;
+}
+
+.theme-preview-z::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(59,130,246,0.2) 0%, rgba(139,92,246,0.1) 100%);
+}
+
+.theme-preview-dark {
+  background: #0f172a;
+}
+
+.theme-preview-dark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(96,165,250,0.15) 0%, rgba(167,139,250,0.08) 100%);
+}
+
+.theme-preview-light {
+  background: #f8fafc;
+}
+
+.theme-preview-light::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(124,58,237,0.04) 100%);
+}
+
+.theme-preview-stripe {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  right: 6px;
+  height: 3px;
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.theme-preview-z .theme-preview-stripe { background: linear-gradient(90deg, #3b82f6, #8b5cf6) }
+.theme-preview-dark .theme-preview-stripe { background: linear-gradient(90deg, #60a5fa, #a78bfa) }
+.theme-preview-light .theme-preview-stripe { background: linear-gradient(90deg, #2563eb, #7c3aed) }
+
+.theme-option-label {
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.theme-option-active .theme-option-label {
+  color: var(--signal-blue);
+}
+
+/* Sandbox status */
+.sandbox-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sandbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--depth-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.sandbox-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.sandbox-icon-ok { background: rgba(16, 185, 129, 0.12); }
+.sandbox-icon-warn { background: rgba(245, 158, 11, 0.12); }
+
+.sandbox-info { flex: 1; min-width: 0; }
+
+.sandbox-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.sandbox-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Skills viewer */
+.skills-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.skills-tab {
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  transition: all var(--duration-fast);
+}
+
+.skills-tab:hover { color: var(--text-secondary) }
+
+.skills-tab-active {
+  color: var(--signal-violet);
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.skill-doc {
+  background: var(--depth-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.skill-doc-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.skill-doc-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.skill-doc-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--signal-violet);
+  margin-bottom: 8px;
+}
+
+/* Settings gear button in nerve bar */
+.nerve-settings-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  transition: all var(--duration-fast);
+  flex-shrink: 0;
+}
+
+.nerve-settings-btn:hover {
+  color: var(--text-primary);
+  background: var(--depth-2);
+  border-color: var(--border);
+}
+
+.nerve-settings-btn-active {
+  color: var(--text-primary);
+  background: var(--depth-2);
+  border-color: var(--border-active);
+}

@@ -1,0 +1,199 @@
+X/Twitter Discovery Smoke Test Results
+============================================================
+Keyword: #neet
+Timestamp: 2026-05-25T06:56:57.853249
+Total Unique URLs: 48
+============================================================
+
+ 1. [0.70] https://twitter.com/i/status/2054486322186752203
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305478
+
+ 2. [0.70] https://twitter.com/neet_exam?lang=kn
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305538
+
+ 3. [0.70] https://twitter.com/airnewsalerts/status/1436506529176309763
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305549
+
+ 4. [0.70] https://twitter.com/SanatanPrabhat/status/2054198307887698401
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305556
+
+ 5. [0.70] https://twitter.com/ndtv/status/1802945942573740538
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305563
+
+ 6. [0.70] https://twitter.com/agupta_7/status/960192989766213632
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305569
+
+ 7. [0.70] https://twitter.com/ddnewslive/status/1501555887957491716?lang=cs
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305574
+
+ 8. [0.70] https://twitter.com/search?q=%23NEET
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305579
+
+ 9. [0.70] https://twitter.com/anubha1812/status/1518048424603529216?lang=ta
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305584
+
+10. [0.70] https://twitter.com/IndiaToday/status/1809485505668489275
+    From: SearXNG | Query: site:twitter.com "#neet"
+    Time: 2026-05-25T06:56:49.305589
+
+11. [0.70] https://x.com/DDNewslive/status/2055140570474102809
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170004
+
+12. [0.70] https://x.com/otvnews/status/2055143890655883687
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170029
+
+13. [0.70] https://x.com/CNBCTV18Live/status/2055144697841217642
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170033
+
+14. [0.70] https://x.com/DeccanChronicle/status/2055168641042407718
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170035
+
+15. [0.70] https://x.com/IndiaToday/status/2054237891883323640
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170038
+
+16. [0.70] https://x.com/airnewsalerts/status/2050743579656757347
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170040
+
+17. [0.70] https://x.com/CNBCTV18Live/status/2054092414927904922
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170042
+
+18. [0.70] https://x.com/DDIndialive/status/2055146588176261524
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170044
+
+19. [0.70] https://x.com/VTankha/status/2054761275713089730
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170046
+
+20. [0.70] https://x.com/pinarayivijayan/status/2054486322186752203
+    From: SearXNG | Query: site:x.com "#neet"
+    Time: 2026-05-25T06:56:50.170048
+
+21. [0.70] https://twitter.com/NTA_Exams/status/2055137455981183411
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031766
+
+22. [0.70] https://twitter.com/NTA_Exams/status/2054089524347871736
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031807
+
+23. [0.70] https://twitter.com/NTA_Exams/status/2055300665594060939
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031816
+
+24. [0.70] https://twitter.com/NTA_exams
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031823
+
+25. [0.70] https://twitter.com/PIB_India/status/2055170547718529225
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031829
+
+26. [0.70] https://twitter.com/NTA_Exams/status/2057883020879884757/embed
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031834
+
+27. [0.70] https://twitter.com/PTI_News/status/2055141482454237369
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031841
+
+28. [0.70] https://twitter.com/NTA_Exams/status/2049823891821113472
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031847
+
+29. [0.70] https://twitter.com/ANI/status/2058521907604172926
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031852
+
+30. [0.70] https://twitter.com/ANI/status/2056892329227915764
+    From: SearXNG | Query: site:twitter.com #neet
+    Time: 2026-05-25T06:56:51.031857
+
+31. [0.70] https://x.com/NTA_Exams/status/2055137455981183411
+    From: SearXNG | Query: site:x.com #neet
+    Time: 2026-05-25T06:56:51.928313
+
+32. [0.70] https://x.com/NTA_Exams/status/2054089524347871736
+    From: SearXNG | Query: site:x.com #neet
+    Time: 2026-05-25T06:56:51.928343
+
+33. [0.70] https://x.com/NTA_Exams/status/2049823891821113472
+    From: SearXNG | Query: site:x.com #neet
+    Time: 2026-05-25T06:56:51.928351
+
+34. [0.70] https://x.com/NTA_Exams
+    From: SearXNG | Query: site:x.com #neet
+    Time: 2026-05-25T06:56:51.928354
+
+35. [0.70] https://x.com/moneycontrolcom/status/2055141149036392684
+    From: SearXNG | Query: site:x.com #neet
+    Time: 2026-05-25T06:56:51.928360
+
+36. [0.70] https://x.com/NTA_Exams/with_replies
+    From: SearXNG | Query: site:x.com #neet
+    Time: 2026-05-25T06:56:51.928363
+
+37. [0.70] https://x.com/businessline/status/2055150434994540763
+    From: SearXNG | Query: site:x.com #neet
+    Time: 2026-05-25T06:56:51.928365
+
+38. [0.70] https://x.com/sunandavashisht/status/2055655779156595042
+    From: SearXNG | Query: site:x.com #neet
+    Time: 2026-05-25T06:56:51.928368
+
+39. [0.70] https://x.com/
+    From: SearXNG | Query: twitter #neet
+    Time: 2026-05-25T06:56:53.251551
+
+40. [0.70] https://search.twitter.com/?lang=en
+    From: SearXNG | Query: twitter #neet
+    Time: 2026-05-25T06:56:53.251582
+
+41. [0.70] https://x.company/
+    From: SearXNG | Query: x.com #neet
+    Time: 2026-05-25T06:56:54.846429
+
+42. [0.70] https://about.x.com/en
+    From: SearXNG | Query: x.com #neet
+    Time: 2026-05-25T06:56:54.846434
+
+43. [0.70] https://help.x.com/en/using-x/download-the-x-app
+    From: SearXNG | Query: x.com #neet
+    Time: 2026-05-25T06:56:54.846438
+
+44. [0.70] https://twitter.com/ANI/status/2056672096441270579
+    From: SearXNG | Query: "neet" site:twitter.com
+    Time: 2026-05-25T06:56:56.147139
+
+45. [0.70] https://twitter.com/twitter/status/2053385885899796680
+    From: SearXNG | Query: "neet" site:twitter.com
+    Time: 2026-05-25T06:56:56.147146
+
+46. [0.70] https://x.com/PChidambaram_IN/status/2054167713321558235
+    From: SearXNG | Query: "neet" site:x.com
+    Time: 2026-05-25T06:56:57.349785
+
+47. [0.70] https://x.com/IndianTechGuide/status/2057687926314557883
+    From: SearXNG | Query: "neet" site:x.com
+    Time: 2026-05-25T06:56:57.349791
+
+48. [0.70] https://x.com/ZeeBusiness/status/2055169248339902916
+    From: SearXNG | Query: "neet" site:x.com
+    Time: 2026-05-25T06:56:57.349797
+

@@ -1,0 +1,27 @@
+tool_id: fetch_trends24
+name: Fetch Trends24
+description: "Scrape Trends24.in via Lightpanda CDP browser to get current trending hashtags and timeline blocks"
+version: "1.0.0"
+category: data_collection
+
+parameters:
+  - name: country
+    type: string
+    description: "Country/location slug (e.g. 'worldwide', 'india')"
+    required: false
+    default: "worldwide"
+  - name: max_tags
+    type: integer
+    description: "Maximum number of hashtags to return"
+    required: false
+    default: 30
+
+returns:
+  type: object
+  description: "JSON with tags list, blocks (with timestamps), fetched_at_utc"
+
+impl: tools-impl/fetch_trends24.py
+trust_level: trusted
+permissions:
+  - network
+  - browser

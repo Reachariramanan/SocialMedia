@@ -1,0 +1,71 @@
+# SearXNG configuration
+
+general:
+  debug: true
+  instance_name: "SearXNG Local"
+  privacypolicy_url: false
+  donation_url: false
+
+search:
+  safe_search: 1
+  autocomplete: ""
+  default_lang: "en"
+  formats:
+    - html
+    - json
+
+server:
+  port: 8080
+  bind_address: "0.0.0.0"
+  base_url: "http://localhost:8888/"
+  secret_key: "change_me_to_a_random_secure_string"
+
+ui:
+  default_theme: "simple"
+  default_locale: "en"
+  items_per_page: 30
+
+outgoing:
+  proxy_server: "socks5h://tor:9050"
+  no_proxy: "127.0.0.1,localhost"
+
+engines:
+  - name: google
+    engine: google
+    shortcut: google
+    disabled: false
+    timeout: 10
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: false
+    timeout: 10
+  - name: brave
+    engine: brave
+    shortcut: brave
+    disabled: false
+    timeout: 10
+
+currencies:
+  - USD
+  - EUR
+  - GBP
+
+languages:
+  - en
+  - es
+  - fr
+  - de
+  - it
+  - pt
+  - ru
+  - ja
+  - ko
+  - zh
+
+# DOI resolvers (must be at top level, not nested)
+doi_resolvers:
+  oadoi.org: "https://oadoi.org/"
+  doi.org: "https://doi.org/"
+
+default_doi_resolver: "oadoi.org"

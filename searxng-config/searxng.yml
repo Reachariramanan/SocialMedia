@@ -1,0 +1,98 @@
+# SearXNG configuration
+# For customization, see: https://docs.searxng.org/admin/settings/index.html
+
+server:
+  # secret key used for sessions
+  secret_key: "${SEARXNG_SECRET_KEY:-change_me}"
+  
+  # binding address
+  bind_address: "${SEARXNG_BIND_ADDRESS:-0.0.0.0}"
+  
+  # port to listen on
+  port: "${SEARXNG_PORT:-8080}"
+  
+  # base URL (must end with /)
+  base_url: "${SEARXNG_BASE_URL:-http://localhost:8080/}"
+  
+  # enable debug mode
+  debug: true
+  
+  # UI settings
+  ui:
+    # enable transparent links (clicked links will have the same origin as searxng)
+    transparent_search: false
+    # enable transparent results (clicked results will have the same origin as searxng)
+    transparent_results: false
+    # enable dark mode by default
+    dark_mode: false
+    # language to use by default
+    default_locale: "en"
+    # theme to use by default
+    default_theme: "simple"
+    # items per page
+    items_per_page: 30
+  
+  # search settings
+  search:
+    # number of results per page
+    results_count: 50
+    # timeout for search queries
+    timeout: 10
+    # max requests per query
+    max_requests: 5
+    # safe search (0=off, 1=moderate, 2=strict)
+    safe_search: 1
+
+# upstream proxy settings
+outgoing:
+  # use SOCKS proxy for outgoing requests
+  proxy_server: "socks5h://tor:9050"
+  # bypass proxy for localhost
+  no_proxy: "127.0.0.1,localhost"
+
+# engines configuration
+engines:
+  - name: google
+    engine: google
+    # disable this engine if you don't want to use Google
+    disabled: false
+    timeout: 10
+  
+  - name: duckduckgo
+    engine: duckduckgo
+    disabled: false
+    timeout: 10
+  
+  - name: brave
+    engine: brave
+    disabled: false
+    timeout: 10
+  
+  - name: quixord
+    engine: quixord
+    disabled: true
+    timeout: 10
+
+# query prefix
+query_prefix: "q="
+# query suffix
+query_suffix: ""
+
+# enabled currencies
+currencies:
+  - USD
+  - EUR
+  - GBP
+
+# enabled languages
+languages:
+  - en
+  - es
+  - fr
+  - de
+  - it
+  - pt
+  - ru
+  - ja
+  - ko
+  - zh

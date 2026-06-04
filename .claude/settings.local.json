@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(pkill -f \"python server.py\")",
+      "Bash(curl -s http://localhost:8082/)"
+    ]
+  }
+}

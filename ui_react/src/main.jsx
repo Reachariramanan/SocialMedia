@@ -1,0 +1,15 @@
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App.jsx'
+import './styles/tokens.css'
+import './styles/reset.css'
+import './styles/animations.css'
+import './styles/nerve-bar.css'
+import './styles/canvas.css'
+import './styles/lenses.css'
+import './styles/command-palette.css'
+import './styles/components.css'
+import './styles/settings.css'
+import './styles/responsive.css'
+
+createRoot(document.getElementById('root')).render(<App />)

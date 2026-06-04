@@ -1,0 +1,45 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+html, body, #root { height: 100%; overflow: hidden }
+
+body {
+  background: var(--depth-0);
+  background-image: radial-gradient(ellipse at 10% 0%, rgba(59,130,246,0.05), transparent 50%),
+                    radial-gradient(ellipse at 90% 100%, rgba(139,92,246,0.04), transparent 50%);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+a { color: var(--signal-blue); text-decoration: none }
+a:hover { text-decoration: underline }
+
+input {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px }
+::-webkit-scrollbar-track { background: transparent }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px }
+::-webkit-scrollbar-thumb:hover { background: var(--border-active) }
+
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: var(--text-primary);
+}

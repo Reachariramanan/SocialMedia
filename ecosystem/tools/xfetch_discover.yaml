@@ -1,0 +1,25 @@
+tool_id: xfetch_discover
+name: X/Twitter URL Discovery
+description: "Discover tweet URLs for keywords via SearXNG + RSS ingestion, then deduplicate and prioritize results"
+version: "1.0.0"
+category: data_collection
+
+parameters:
+  - name: keywords
+    type: string
+    description: "Comma-separated keywords to discover tweets for (e.g. 'IPL,Modi,AI')"
+    required: true
+  - name: limit
+    type: integer
+    description: "Maximum number of prioritized URLs to return"
+    required: false
+    default: 50
+
+returns:
+  type: object
+  description: "JSON with total, sources breakdown, and ranked URLs with priority scores"
+
+impl: tools-impl/xfetch_discover.py
+trust_level: trusted
+permissions:
+  - network

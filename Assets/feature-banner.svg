@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="900" height="380">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#1e1b4b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1b4b;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:0.3" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-opacity="0.025" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+
+  <rect width="900" height="380" fill="url(#bg)"/>
+  <rect width="900" height="380" fill="url(#grid)"/>
+  <rect x="0" y="0" width="900" height="4" fill="url(#accent)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="80" cy="50" r="70" fill="#6366f1" opacity="0.04"/>
+  <circle cx="850" cy="330" r="90" fill="#8b5cf6" opacity="0.04"/>
+  <circle cx="750" cy="40" r="50" fill="#a78bfa" opacity="0.03"/>
+  <circle cx="150" cy="320" r="60" fill="#6366f1" opacity="0.03"/>
+
+  <!-- Title -->
+  <text x="450" y="55" text-anchor="middle" fill="#f1f5f9" font-family="system-ui,-apple-system,sans-serif" font-size="30" font-weight="800" letter-spacing="4">
+    SOCIAL MEDIA INTELLIGENCE PLATFORM
+  </text>
+  <text x="450" y="78" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="400" letter-spacing="1">
+    Automated trend tracking · Multi-agent AI reporting · Distributed discovery pipeline
+  </text>
+
+  <!-- Divider -->
+  <line x1="350" y1="95" x2="550" y2="95" stroke="url(#accent)" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- Feature cards row 1 -->
+  <g transform="translate(50, 120)">
+    <rect width="220" height="90" rx="10" fill="url(#cardGrad)" stroke="#6366f1" stroke-width="1" stroke-opacity="0.2"/>
+    <text x="110" y="28" text-anchor="middle" fill="#a5b4fc" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="700" letter-spacing="1">
+      01
+    </text>
+    <text x="110" y="50" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700">
+      Trends24 Scraping
+    </text>
+    <text x="110" y="68" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      Live trend buckets + RSS enrichment
+    </text>
+    <text x="110" y="84" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      Tor-anonymized via Lightpanda CDP
+    </text>
+  </g>
+
+  <g transform="translate(340, 120)">
+    <rect width="220" height="90" rx="10" fill="url(#cardGrad)" stroke="#8b5cf6" stroke-width="1" stroke-opacity="0.2"/>
+    <text x="110" y="28" text-anchor="middle" fill="#c4b5fd" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="700" letter-spacing="1">
+      02
+    </text>
+    <text x="110" y="50" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700">
+      X / Twitter Discovery
+    </text>
+    <text x="110" y="68" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      SearXNG search + temporal slicing
+    </text>
+    <text x="110" y="84" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      GraphQL interception &amp; deduplication
+    </text>
+  </g>
+
+  <g transform="translate(630, 120)">
+    <rect width="220" height="90" rx="10" fill="url(#cardGrad)" stroke="#6366f1" stroke-width="1" stroke-opacity="0.2"/>
+    <text x="110" y="28" text-anchor="middle" fill="#a5b4fc" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="700" letter-spacing="1">
+      03
+    </text>
+    <text x="110" y="50" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700">
+      Feed Intelligence
+    </text>
+    <text x="110" y="68" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      Google News RSS + Twitter API
+    </text>
+    <text x="110" y="84" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      Nitter mirrors + SearXNG fallback
+    </text>
+  </g>
+
+  <!-- Feature cards row 2 -->
+  <g transform="translate(50, 225)">
+    <rect width="220" height="90" rx="10" fill="url(#cardGrad)" stroke="#8b5cf6" stroke-width="1" stroke-opacity="0.2"/>
+    <text x="110" y="28" text-anchor="middle" fill="#c4b5fd" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="700" letter-spacing="1">
+      04
+    </text>
+    <text x="110" y="50" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700">
+      Multi-Agent Pipeline
+    </text>
+    <text x="110" y="68" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      5-agent Yukta team · Leader
+    </text>
+    <text x="110" y="84" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      Coordinator · YAML-defined workflows
+    </text>
+  </g>
+
+  <g transform="translate(340, 225)">
+    <rect width="220" height="90" rx="10" fill="url(#cardGrad)" stroke="#6366f1" stroke-width="1" stroke-opacity="0.2"/>
+    <text x="110" y="28" text-anchor="middle" fill="#a5b4fc" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="700" letter-spacing="1">
+      05
+    </text>
+    <text x="110" y="50" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700">
+      vLLM Summarization
+    </text>
+    <text x="110" y="68" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      Qwen3-35B local inference
+    </text>
+    <text x="110" y="84" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      Auto-reports · Content enrichment
+    </text>
+  </g>
+
+  <g transform="translate(630, 225)">
+    <rect width="220" height="90" rx="10" fill="url(#cardGrad)" stroke="#8b5cf6" stroke-width="1" stroke-opacity="0.2"/>
+    <text x="110" y="28" text-anchor="middle" fill="#c4b5fd" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="700" letter-spacing="1">
+      06
+    </text>
+    <text x="110" y="50" text-anchor="middle" fill="#e2e8f0" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700">
+      React Dashboard
+    </text>
+    <text x="110" y="68" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      5 dashboard lenses · Command
+    </text>
+    <text x="110" y="84" text-anchor="middle" fill="#94a3b8" font-family="system-ui,-apple-system,sans-serif" font-size="11">
+      Palette · Agent run monitoring
+    </text>
+  </g>
+
+  <!-- Bottom accent line -->
+  <rect x="0" y="376" width="900" height="4" fill="url(#accent)"/>
+</svg>

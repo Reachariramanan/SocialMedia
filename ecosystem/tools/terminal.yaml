@@ -1,0 +1,30 @@
+tool_id: terminal
+name: Terminal Command Runner
+description: "Execute a shell command in a sandboxed subprocess and return stdout/stderr. Available only to the Researcher agent."
+version: "1.0.0"
+category: system
+
+parameters:
+  - name: command
+    type: string
+    description: "Shell command to execute"
+    required: true
+  - name: cwd
+    type: string
+    description: "Working directory (defaults to project root)"
+    required: false
+    default: ""
+  - name: timeout
+    type: integer
+    description: "Timeout in seconds"
+    required: false
+    default: 30
+
+returns:
+  type: object
+  description: "JSON with stdout, stderr, returncode, elapsed_sec"
+
+impl: tools-impl/terminal.py
+trust_level: sandbox
+permissions:
+  - shell

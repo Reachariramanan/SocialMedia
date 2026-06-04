@@ -1,0 +1,12 @@
+pydantic
+pydantic-settings
+httpx
+feedparser
+scrapy
+scrapy-redis
+redis
+playwright
+prometheus_client
+kafka-python # For Kafka integration
+
+stem

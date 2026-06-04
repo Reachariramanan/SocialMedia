@@ -1,0 +1,53 @@
+services:
+  tor:
+    image: dockurr/tor
+    container_name: tor
+    ports:
+      - "9050:9050"
+      - "9051:9051"
+    volumes:
+      - ./config:/etc/tor
+      - ./data:/var/lib/tor
+    tmpfs:
+      - /tmp
+    restart: always
+    networks:
+      - scrape-net
+
+  lightpanda:
+    image: lightpanda/browser:nightly
+    container_name: lightpanda
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9222:9222"
+    environment:
+      - ALL_PROXY=socks5h://tor:9050
+      - NO_PROXY=127.0.0.1,localhost
+    depends_on:
+      - tor
+    networks:
+      - scrape-net
+
+  searxng:
+    image: docker.io/searxng/searxng:latest
+    container_name: searxng-core
+    restart: always
+    ports:
+      - "8888:8080"
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8888/
+      - SEARXNG_SETTINGS_PROFILE=debug
+      - SEARXNG_SECRET_KEY=change_me
+      - SEARXNG_BIND_ADDRESS=0.0.0.0
+      - SEARXNG_PORT=8080
+    volumes:
+      - ./searxng-config/settings.yml:/etc/searxng/settings.yml
+      - ./searxng-data:/var/cache/searxng/
+    networks:
+      - scrape-net
+    depends_on:
+      - tor
+
+networks:
+  scrape-net:
+    driver: bridge

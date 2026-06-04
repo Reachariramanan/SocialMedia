@@ -1,0 +1,30 @@
+tool_id: searxng_search
+name: SearXNG Web Search
+description: "Run a web search query through the local SearXNG metasearch engine and return ranked results"
+version: "1.0.0"
+category: search
+
+parameters:
+  - name: query
+    type: string
+    description: "Search query string"
+    required: true
+  - name: engines
+    type: string
+    description: "Comma-separated engines to query (e.g. 'google,bing,duckduckgo'). Leave empty for defaults."
+    required: false
+    default: ""
+  - name: limit
+    type: integer
+    description: "Maximum number of results"
+    required: false
+    default: 10
+
+returns:
+  type: object
+  description: "JSON with query, results list (title, url, content, score)"
+
+impl: tools-impl/searxng_search.py
+trust_level: trusted
+permissions:
+  - network

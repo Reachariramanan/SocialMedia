@@ -1,0 +1,25 @@
+tool_id: fetch_feeds
+name: Fetch News Feeds
+description: "Fetch Google News RSS and tweets for a list of hashtags using the local SearXNG/Nitter/Twitter pipeline"
+version: "1.0.0"
+category: data_collection
+
+parameters:
+  - name: hashtags
+    type: string
+    description: "Comma-separated hashtags to fetch (e.g. '#IPL,#Modi,#AI')"
+    required: true
+  - name: limit
+    type: integer
+    description: "Max articles/tweets per source per hashtag"
+    required: false
+    default: 8
+
+returns:
+  type: object
+  description: "JSON with fetched_at_utc, hashtags, google_trends, and per-hashtag feeds (google_news + tweets)"
+
+impl: tools-impl/fetch_feeds.py
+trust_level: trusted
+permissions:
+  - network

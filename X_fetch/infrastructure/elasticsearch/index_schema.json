@@ -1,0 +1,25 @@
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "properties": {
+      "tweet_id": { "type": "keyword" },
+      "author_id": { "type": "keyword" },
+      "author_username": { "type": "keyword" },
+      "text": { "type": "text", "analyzer": "standard" },
+      "hashtags": { "type": "keyword" },
+      "timestamp": { "type": "date" },
+      "metrics": {
+        "properties": {
+          "likes": { "type": "integer" },
+          "retweets": { "type": "integer" },
+          "replies": { "type": "integer" },
+          "views": { "type": "integer" }
+        }
+      },
+      "priority_score": { "type": "float" }
+    }
+  }
+}

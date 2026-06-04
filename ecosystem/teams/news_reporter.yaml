@@ -1,0 +1,19 @@
+team_id: news_reporter
+name: News Reporter Team
+structure: hierarchical
+version: "1.0.0"
+
+leader: master
+
+members:
+  - action_planner
+  - researcher
+  - dashboard_layout_builder
+  - report_writer
+
+description: |
+  A hierarchical team that produces automated news intelligence dashboards.
+  The Master directs the team through structured rounds: planning, research,
+  layout design, and HTML report generation.
+
+max_rounds: 6

@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tor-proxy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tor-proxy
+  template:
+    metadata:
+      labels:
+        app: tor-proxy
+    spec:
+      containers:
+      - name: tor-proxy
+        image: pickapp/tor-proxy:latest
+        ports:
+        - containerPort: 8118
+        - containerPort: 9050
+        - containerPort: 9051
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tor-proxy-service
+spec:
+  selector:
+    app: tor-proxy
+  ports:
+    - name: http
+      port: 8118
+    - name: socks
+      port: 9050
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lightpanda
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: lightpanda
+  template:
+    metadata:
+      labels:
+        app: lightpanda
+    spec:
+      containers:
+      - name: lightpanda
+        image: lightpanda/browser:nightly
+        command: ["./lightpanda", "serve", "--http-proxy", "http://tor-proxy-service:8118"]
+        ports:
+        - containerPort: 9222
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lightpanda-service
+spec:
+  selector:
+    app: lightpanda
+  ports:
+    - port: 9222
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: browser-fetch-agent
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: browser-fetch-agent
+  template:
+    metadata:
+      labels:
+        app: browser-fetch-agent
+    spec:
+      containers:
+      - name: browser-fetch-agent
+        image: x-intelligence/browser-fetch-agent:latest
+        env:
+        - name: LIGHTPANDA_CDP_URL
+          value: "ws://lightpanda-service:9222"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379/0"
+        - name: PROMETHEUS_PORT
+          value: "8000"

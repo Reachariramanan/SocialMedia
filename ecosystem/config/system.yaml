@@ -1,0 +1,20 @@
+system_id: news_reporter_system
+version: "1.0.0"
+
+llm:
+  provider: vllm
+  model: qwen3-6-27b
+  base_url: "${VLLM_BASE_URL:-http://192.168.200.46:11449/v1}"
+  temperature: 0.4
+
+memory:
+  max_history: 20
+  overflow_archive: true
+  kv_cache_size: 10
+
+logging:
+  level: INFO
+  format: "%(asctime)s [%(name)s] %(levelname)s: %(message)s"
+
+data_dir: "data"
+runs_dir: "data/runs"
