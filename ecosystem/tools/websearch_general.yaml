@@ -1,0 +1,20 @@
+name: websearch_general
+description: >
+  General web search via SearXNG with no platform filter. Returns news and web
+  results from all available engines. Use for broad context on a story — no
+  site: restriction, so results come from all sources.
+parameters:
+  - name: query
+    type: string
+    description: Search query string
+    required: true
+  - name: categories
+    type: string
+    description: "Comma-separated SearXNG categories (default: general,news)"
+    required: false
+    default: "general,news"
+  - name: limit
+    type: integer
+    description: Maximum number of results (default 50)
+    required: false
+    default: 50

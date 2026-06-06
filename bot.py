@@ -413,6 +413,10 @@ def summarize_with_vllm(
         ],
         "temperature": 0.2,
         "max_tokens": 700,
+        # Qwen3 thinking off — without this the model emits a "thinking process"
+        # preamble that sanitize_llm_summary() rejects, silently falling back to
+        # the deterministic summary. Mirrors agent_runtime/llm.py's _Qwen3VLLMClient.
+        "chat_template_kwargs": {"enable_thinking": False},
     }
 
     try:
@@ -439,6 +443,7 @@ def summarize_with_vllm(
             "raw": payload,
         }
     except Exception as exc:
+        print(f"[{utc_now()}] summarize_with_vllm failed: {type(exc).__name__}: {exc}")
         return {
             "ok": False,
             "summary": "",
@@ -627,7 +632,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--vllm-base-url",
-        default=os.getenv("VLLM_BASE_URL", "http://200.23:11642/v1"),
+        default=os.getenv("VLLM_BASE_URL", "http://192.168.200.23:11642/v1"),
         help="OpenAI-compatible vLLM base URL",
     )
     parser.add_argument(

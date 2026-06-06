@@ -8,12 +8,12 @@ export default function useAgentRun(onComplete) {
   const [error, setError] = useState('')
   const pollRef = useRef(null)
 
-  const start = useCallback(async (topic) => {
+  const start = useCallback(async (topic, skill = 'html_report_writer') => {
     setError('')
     setRounds([])
     setStatus('queued')
     try {
-      const data = await startAgentRun(topic)
+      const data = await startAgentRun(topic, skill)
       setRunId(data.run_id)
 
       pollRef.current = setInterval(async () => {

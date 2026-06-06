@@ -2,8 +2,17 @@ import os
 from typing import Any, Dict, List, Optional
 from yukta.core.Clients import VLLMClient
 
-_VLLM_BASE = os.getenv("VLLM_BASE_URL", "http://192.168.200.46:11449")
-_VLLM_MODEL = os.getenv("VLLM_MODEL", "qwen3-6-27b")
+def _normalize_base(url: str) -> str:
+    # VLLMClient appends the "/v1/" prefix to every endpoint itself, so the base
+    # must NOT already end in /v1 (the .env value does → would yield /v1/v1/...).
+    url = (url or "").rstrip("/")
+    if url.endswith("/v1"):
+        url = url[: -len("/v1")]
+    return url
+
+
+_VLLM_BASE = _normalize_base(os.getenv("VLLM_BASE_URL", "http://192.168.200.23:11642"))
+_VLLM_MODEL = os.getenv("VLLM_MODEL", "qwen36-35b")
 
 
 class _Qwen3VLLMClient(VLLMClient):

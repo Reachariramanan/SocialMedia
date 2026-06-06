@@ -1,0 +1,15 @@
+name: facebook_search
+description: >
+  Search for Facebook posts and pages about specific keywords using
+  site:facebook.com filters via SearXNG. Returns results from facebook.com
+  only. Use to find public Facebook discussions about top events.
+parameters:
+  - name: keywords
+    type: string
+    description: "Comma-separated keywords or hashtags e.g. 'IPL,Modi'"
+    required: true
+  - name: limit
+    type: integer
+    description: Maximum number of results to return (default 30)
+    required: false
+    default: 30

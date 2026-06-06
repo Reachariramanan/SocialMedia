@@ -55,7 +55,7 @@ class LLMClientFactory:
             return OllamaClient(model_name, url, **kwargs)
         
         elif model_type == ModelType.VLLM:
-            url = base_url or "http://localhost:8000"
+            url = base_url or "http://192.168.200.23:11642/v1"
             return VLLMClient(model_name, url, **kwargs)
         
         elif model_type in [ModelType.REMOTE, ModelType.OPENAI_COMPATIBLE]:
@@ -86,7 +86,7 @@ class LLMClientFactory:
         return OllamaClient(model_name, **kwargs)
     
     @staticmethod
-    def create_vllm(model_name: str, base_url: str = "http://localhost:8000", **kwargs) -> VLLMClient:
+    def create_vllm(model_name: str, base_url: str = "http://192.168.200.23:11642/v1", **kwargs) -> VLLMClient:
         """Quick helper to create vLLM client."""
         return VLLMClient(model_name, base_url, **kwargs)
     

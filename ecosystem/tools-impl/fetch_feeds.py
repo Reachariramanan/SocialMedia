@@ -1,8 +1,19 @@
-"""Thin wrapper over poc_feeds.fetcher.fetch_all."""
+"""Thin wrapper over the X_fetch feeds fetcher's fetch_all."""
 import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'poc_feeds'))
 
-from fetcher import fetch_all
+# Reuse the maintained fetcher at X_fetch/tools/feeds_fetch_tool/fetcher.py.
+# Prefer the package import (server.py puts X_fetch on sys.path); fall back to
+# inserting the directory so this also works when run standalone.
+try:
+    from tools.feeds_fetch_tool.fetcher import fetch_all
+except ImportError:
+    _XFETCH = os.path.join(os.path.dirname(__file__), '..', '..', 'X_fetch')
+    sys.path.insert(0, _XFETCH)
+    sys.path.insert(0, os.path.join(_XFETCH, 'tools', 'feeds_fetch_tool'))
+    try:
+        from tools.feeds_fetch_tool.fetcher import fetch_all
+    except ImportError:
+        from fetcher import fetch_all
 
 
 def run(hashtags: str, limit: int = 8) -> dict:

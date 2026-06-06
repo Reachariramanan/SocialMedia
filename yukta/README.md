@@ -131,7 +131,7 @@ from yukta.core.Clients.vllm_client import VLLMClient
 agent = create_agent(
     name="Coder",
     system_prompt=SystemPrompt("Coder", "You are an expert Python developer."),
-    llm_client=VLLMClient("meta-llama/Llama-3-8B", base_url="http://localhost:8000"),
+    llm_client=VLLMClient("qwen36-35b", base_url="http://192.168.200.23:11642/v1"),
     config=AgentConfig(verbose=True, max_iter=15),
 )
 ```
@@ -289,7 +289,7 @@ All clients extend `BaseLLMClient` and expose an identical `generate()` interfac
 | Class | Backend | Default URL |
 |-------|---------|-------------|
 | `OllamaClient` | Ollama local server | `http://localhost:11434` |
-| `VLLMClient` | vLLM OpenAI-compatible server | `http://localhost:8000` |
+| `VLLMClient` | vLLM OpenAI-compatible server | `http://192.168.200.23:11642/v1` |
 | `SGLangClient` | SGLang server | `http://localhost:30000` |
 | `LMStudioClient` | LM Studio local server | `http://localhost:1234` |
 | `HuggingFaceClient` | HF Inference Endpoints / Serverless | `https://router.huggingface.co/hf-inference` |
@@ -312,8 +312,8 @@ ollama = OllamaClient(
 
 # vLLM — params go top-level into the OpenAI-compatible payload
 vllm = VLLMClient(
-    model_name="meta-llama/Llama-3-8B-Instruct",
-    base_url="http://localhost:8000",
+    model_name="qwen36-35b",
+    base_url="http://192.168.200.23:11642/v1",
     temperature=0.3,
     top_p=0.95,
     seed=42,
@@ -343,8 +343,8 @@ from yukta.core.Clients.llmclientfactory import LLMClientFactory, ModelType
 
 client = LLMClientFactory.create_client(
     ModelType.VLLM,
-    model_name="mistralai/Mistral-7B-Instruct-v0.3",
-    base_url="http://localhost:8000",
+    model_name="qwen36-35b",
+    base_url="http://192.168.200.23:11642/v1",
     temperature=0.4,
 )
 ```
@@ -361,7 +361,7 @@ Call-time values always win. Pass `llm_kwargs` to `agent.run()` or `agent.invoke
 
 ```python
 # Constructor sets default temperature=0.7
-client = VLLMClient("model", base_url="http://localhost:8000", temperature=0.7)
+client = VLLMClient("qwen36-35b", base_url="http://192.168.200.23:11642/v1", temperature=0.7)
 agent.set_llm_client(client)
 
 # Override just for this turn
@@ -381,8 +381,8 @@ agent.run("Hello", llm_kwargs={"options": {"temperature": 0.3, "num_ctx": 4096}}
 
 ```python
 client = VLLMClient(
-    "model",
-    base_url="http://localhost:8000",
+    "qwen36-35b",
+    base_url="http://192.168.200.23:11642/v1",
     timeout=120,            # read timeout in seconds
     connect_timeout=5,      # connection timeout in seconds
     max_retries=3,          # retry on 429/500/502/503/504

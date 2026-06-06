@@ -26,25 +26,68 @@ ui:
   items_per_page: 30
 
 outgoing:
-  proxy_server: "socks5h://tor:9050"
-  no_proxy: "127.0.0.1,localhost"
+  # Search engines should NOT go through Tor — they're non-sensitive discovery
+  # and many block Tor IPs. Use direct access for speed and reliability.
+  # Tweet extraction (sensitive) uses Tor+Lightpanda separately.
+  request_timeout: 10.0
+  pool_connections: 100
+  pool_maxsize: 20
 
 engines:
-  - name: google
-    engine: google
-    shortcut: google
-    disabled: false
-    timeout: 10
   - name: duckduckgo
     engine: duckduckgo
     shortcut: ddg
+    disabled: true
+    timeout: 10
+    comment: "Disabled: too aggressive CAPTCHA on automated queries"
+  - name: bing
+    engine: bing
+    shortcut: bi
     disabled: false
     timeout: 10
+    categories: [general, news]
+  - name: bing news
+    engine: bing_news
+    shortcut: bin
+    disabled: false
+    timeout: 10
+    categories: [news]
   - name: brave
     engine: brave
     shortcut: brave
     disabled: false
     timeout: 10
+    categories: [general]
+  - name: mojeek
+    engine: mojeek
+    shortcut: mjk
+    disabled: true
+    timeout: 10
+    comment: "Disabled: blocks too frequently"
+  - name: startpage
+    engine: startpage
+    shortcut: sp
+    disabled: true
+    timeout: 10
+    comment: "Disabled: CAPTCHA rate limit"
+  - name: qwant
+    engine: qwant
+    shortcut: qwant
+    disabled: true
+    timeout: 10
+    comment: "Disabled: missing config attribute qwant.qwant_categ"
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: wp
+    disabled: false
+    timeout: 10
+    categories: [general]
+  - name: google
+    engine: google
+    shortcut: google
+    disabled: false
+    timeout: 10
+    categories: [general, news]
 
 currencies:
   - USD

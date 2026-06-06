@@ -309,7 +309,7 @@ Environment variables are managed through `.env` (copied from `.env.example`):
 |----------|---------|-------------|
 | `LIGHTPANDA_CDP_URL` | `http://127.0.0.1:9222` | Lightpanda browser CDP endpoint |
 | `VLLM_BASE_URL` | `http://192.168.200.23:11642/v1` | vLLM inference endpoint |
-| `VLLM_MODEL` | `qwen3-35b` | Model name for vLLM |
+| `VLLM_MODEL` | `qwen36-35b` | Model name for vLLM |
 | `POLL_INTERVAL_SEC` | `300` | Bot polling interval (seconds) |
 | `SEARXNG_HOST` | `0.0.0.0` | SearXNG bind address |
 | `SEARXNG_PORT` | `8080` | SearXNG internal port |

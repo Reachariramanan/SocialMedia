@@ -88,8 +88,8 @@ class Config:
     OLLAMA_DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "llama2")
     
     # vLLM
-    VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", "http://localhost:8000")
-    VLLM_DEFAULT_MODEL = os.getenv("VLLM_MODEL", "mistralai/Mistral-7B-Instruct-v0.2")
+    VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", "http://192.168.200.23:11642")
+    VLLM_DEFAULT_MODEL = os.getenv("VLLM_MODEL", "qwen36-35b")
     
     # Remote Endpoint (OpenAI, Azure, etc.)
     REMOTE_BASE_URL = os.getenv("REMOTE_BASE_URL", "https://api.openai.com")

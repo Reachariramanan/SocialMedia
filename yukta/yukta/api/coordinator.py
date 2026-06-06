@@ -22,7 +22,7 @@ import logging
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 logger = logging.getLogger("yukta.coordinator")
 
@@ -158,6 +158,7 @@ class LeaderCoordinator:
         team: TeamData,
         ecosystem: Dict[str, Any],
         llm_client: Any = None,
+        on_round_complete: Optional[Callable] = None,
     ) -> None:
         if not YUKTA_AVAILABLE:
             raise RuntimeError("yukta package is required for team coordination")
@@ -165,6 +166,7 @@ class LeaderCoordinator:
         self.team = team
         self.ecosystem = ecosystem
         self.llm_client = llm_client
+        self.on_round_complete = on_round_complete
         self.session_id = f"coord_{team.team_id}_{uuid.uuid4().hex[:8]}"
         self.session = TeamSession(session_id=self.session_id, team_id=team.team_id)
 
@@ -343,6 +345,9 @@ class LeaderCoordinator:
                 "reports": [asdict(r) for r in reports],
             })
             self.session.iteration_count += 1
+
+            if self.on_round_complete:
+                self.on_round_complete(round_num, self.session.history)
 
         logger.warning("LeaderCoordinator: max_rounds (%d) exceeded without completion", max_rounds)
         return {

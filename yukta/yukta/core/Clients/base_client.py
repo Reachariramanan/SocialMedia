@@ -146,7 +146,7 @@ class BaseLLMClient(ABC):
         self.model_name = model_name
         # Validate and normalize base URL
         if not base_url or not base_url.strip():
-            raise ValueError("base_url cannot be empty. Please provide a valid URL (e.g., 'http://localhost:8000')")
+            raise ValueError("base_url cannot be empty. Please provide a valid URL (e.g., 'http://192.168.200.23:11642/v1')")
         parsed = urlparse(base_url.strip())
         _allowed_schemes = {"http", "https", "ws", "wss"}
         if parsed.scheme not in _allowed_schemes:

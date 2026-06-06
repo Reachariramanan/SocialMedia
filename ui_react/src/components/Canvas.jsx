@@ -5,13 +5,15 @@ import SignalStream from './lenses/SignalStream'
 export default function Canvas({
   mode, setMode,
   snapshot, snapshotLoading,
-  runs, selectedRun, html, runHistory, onSelectRun, runsLoading,
+  runs, selectedRun, html, runHistory, onSelectRun, onDeleteRun, reloadRuns, runsLoading,
   agentRun,
+  activeSkill,
   discover,
   feeds,
   systemStatus,
   onTagClick,
   activeQuery,
+  schedules,
 }) {
   return (
     <div className="canvas">
@@ -23,11 +25,15 @@ export default function Canvas({
         html={html}
         runHistory={runHistory}
         onSelectRun={onSelectRun}
+        onDeleteRun={onDeleteRun}
+        reloadRuns={reloadRuns}
         runsLoading={runsLoading}
         agentRun={agentRun}
+        activeSkill={activeSkill}
         discover={discover}
         feeds={feeds}
         activeQuery={activeQuery}
+        schedules={schedules}
       />
       <SignalStream
         snapshot={snapshot}

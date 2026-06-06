@@ -7,7 +7,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'ecosystem', 't
 import fetch_feeds as _ff
 import fetch_trends24 as _ft
 import xfetch_discover as _xd
+import xfetch_extract as _xe
 import searxng_search as _ss
+import websearch_general as _wg
+import facebook_search as _fb
 import terminal as _term
 
 from yukta.tools.tool import Tool, ToolParameter, ToolType
@@ -54,6 +57,22 @@ TOOL_XFETCH_DISCOVER = _tool(
     lambda keywords, limit=50: _xd.run(keywords, limit),
 )
 
+TOOL_XFETCH_EXTRACT = _tool(
+    "xfetch_extract",
+    (
+        "Extract tweet content from X/Twitter status URLs via Tor + Lightpanda. "
+        "Returns normalised tweet text, author, engagement counts (likes/retweets/replies/views). "
+        "Pass the tweet_urls discovered by xfetch_discover. "
+        "Each URL yields up to 3 top tweets (~120 tokens each). "
+        "Use AFTER xfetch_discover to get actual tweet text for reports."
+    ),
+    [
+        ToolParameter("urls", "string", "Comma-separated X/Twitter status URLs to extract", required=True),
+        ToolParameter("limit", "integer", "Max URLs to extract (default 20, cap 50)", required=False, default=20),
+    ],
+    lambda urls, limit=20: _xe.run(urls, use_tor=True, limit=limit),
+)
+
 TOOL_SEARXNG_SEARCH = _tool(
     "searxng_search",
     "Run a web search through local SearXNG metasearch engine",
@@ -63,6 +82,27 @@ TOOL_SEARXNG_SEARCH = _tool(
         ToolParameter("limit", "integer", "Max results", required=False, default=10),
     ],
     lambda query, engines="", limit=10: _ss.run(query, engines, limit),
+)
+
+TOOL_WEBSEARCH_GENERAL = _tool(
+    "websearch_general",
+    "General web search via SearXNG — no platform filter, broad results from all engines",
+    [
+        ToolParameter("query", "string", "Search query", required=True),
+        ToolParameter("categories", "string", "Comma-separated SearXNG categories", required=False, default="general,news"),
+        ToolParameter("limit", "integer", "Max results", required=False, default=50),
+    ],
+    lambda query, categories="general,news", limit=50: _wg.run(query, categories, limit),
+)
+
+TOOL_FACEBOOK_SEARCH = _tool(
+    "facebook_search",
+    "Search Facebook posts and pages for keywords via site:facebook.com filter in SearXNG",
+    [
+        ToolParameter("keywords", "string", "Comma-separated keywords e.g. 'IPL,Modi'", required=True),
+        ToolParameter("limit", "integer", "Max results", required=False, default=30),
+    ],
+    lambda keywords, limit=30: _fb.run(keywords, limit),
 )
 
 TOOL_TERMINAL = _tool(
@@ -77,13 +117,19 @@ TOOL_TERMINAL = _tool(
     trust="sandbox",
 )
 
-ALL_TOOLS = [TOOL_FETCH_FEEDS, TOOL_FETCH_TRENDS24, TOOL_XFETCH_DISCOVER, TOOL_SEARXNG_SEARCH, TOOL_TERMINAL]
+ALL_TOOLS = [
+    TOOL_FETCH_FEEDS, TOOL_FETCH_TRENDS24, TOOL_XFETCH_DISCOVER, TOOL_XFETCH_EXTRACT,
+    TOOL_SEARXNG_SEARCH, TOOL_WEBSEARCH_GENERAL, TOOL_FACEBOOK_SEARCH, TOOL_TERMINAL,
+]
 
 # Per-agent tool sets
 AGENT_TOOLS = {
     "master": [],
-    "action_planner": [TOOL_FETCH_TRENDS24, TOOL_SEARXNG_SEARCH],
-    "researcher": [TOOL_FETCH_FEEDS, TOOL_FETCH_TRENDS24, TOOL_XFETCH_DISCOVER, TOOL_SEARXNG_SEARCH, TOOL_TERMINAL],
+    "action_planner": [TOOL_FETCH_TRENDS24, TOOL_SEARXNG_SEARCH, TOOL_WEBSEARCH_GENERAL],
+    "researcher": [
+        TOOL_FETCH_FEEDS, TOOL_FETCH_TRENDS24, TOOL_XFETCH_DISCOVER, TOOL_XFETCH_EXTRACT,
+        TOOL_SEARXNG_SEARCH, TOOL_WEBSEARCH_GENERAL, TOOL_FACEBOOK_SEARCH, TOOL_TERMINAL,
+    ],
     "dashboard_layout_builder": [],
     "report_writer": [],
 }

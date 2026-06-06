@@ -36,6 +36,19 @@ export function timeAgo(iso) {
   return `${Math.floor(h / 24)}d ago`
 }
 
+export function timeUntil(iso) {
+  if (!iso) return ''
+  const diff = new Date(iso).getTime() - Date.now()
+  if (diff <= 0) return 'due now'
+  const m = Math.round(diff / 60000)
+  if (m < 1) return 'in <1m'
+  if (m < 60) return `in ${m}m`
+  const h = Math.floor(m / 60), rem = m % 60
+  if (h < 24) return rem ? `in ${h}h ${rem}m` : `in ${h}h`
+  const d = Math.floor(h / 24)
+  return `in ${d}d`
+}
+
 export function parseOutput(raw) {
   if (!raw) return { type: 'text', value: '' }
   if (typeof raw === 'object') return { type: 'json', value: raw }

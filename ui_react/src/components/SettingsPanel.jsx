@@ -101,7 +101,7 @@ const SANDBOX_ITEMS = [
     icon: '🤖',
     cls: 'sandbox-icon-ok',
     name: 'LLM Backend',
-    desc: 'qwen3-6-27b via vLLM — temp 0.4, thinking off',
+    desc: 'qwen36-35b via vLLM — temp 0.4, thinking off',
   },
 ]
 
@@ -111,9 +111,14 @@ const THEMES = [
   { id: 'light', label: 'Light', previewClass: 'theme-preview-light' },
 ]
 
-export default function SettingsPanel({ onClose }) {
-  const [activeSkill, setActiveSkill] = useState('bulletin_board')
+export default function SettingsPanel({ onClose, activeSkill: externalSkill, onSkillChange }) {
+  const [activeSkill, setActiveSkill] = useState(externalSkill || 'bulletin_board')
   const [theme, setTheme] = useState(() => localStorage.getItem('z-theme') || 'z')
+
+  const handleSkillSelect = (skillId) => {
+    setActiveSkill(skillId)
+    onSkillChange?.(skillId)
+  }
 
   const applyTheme = useCallback((t) => {
     document.documentElement.setAttribute('data-theme', t)
@@ -202,7 +207,7 @@ export default function SettingsPanel({ onClose }) {
                 <button
                   key={s.id}
                   className={`skills-tab${activeSkill === s.id ? ' skills-tab-active' : ''}`}
-                  onClick={() => setActiveSkill(s.id)}
+                  onClick={() => handleSkillSelect(s.id)}
                 >
                   {s.name}
                 </button>

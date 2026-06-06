@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { fetchRuns, fetchRunHtml, fetchRunHistory } from '../utils/api'
+import { fetchRuns, fetchRunHtml, fetchRunHistory, deleteRun } from '../utils/api'
 
 export default function useRuns() {
   const [runs, setRuns] = useState([])
@@ -7,19 +7,6 @@ export default function useRuns() {
   const [html, setHtml] = useState('')
   const [history, setHistory] = useState(null)
   const [loading, setLoading] = useState(false)
-
-  const load = useCallback(async () => {
-    try {
-      const data = await fetchRuns()
-      const withHtml = data.filter(r => r.has_html)
-      setRuns(withHtml)
-      if (withHtml.length > 0 && !selected) {
-        selectRun(withHtml[0])
-      }
-    } catch {}
-  }, [])
-
-  useEffect(() => { load() }, [load])
 
   const selectRun = useCallback(async (run) => {
     setSelected(run)
@@ -37,5 +24,39 @@ export default function useRuns() {
     setLoading(false)
   }, [])
 
-  return { runs, selected, html, history, loading, selectRun, reload: load }
+  const load = useCallback(async () => {
+    try {
+      const data = await fetchRuns()
+      const withHtml = data.filter(r => r.has_html)
+      setRuns(withHtml)
+      // Auto-select the newest report only when nothing is selected yet. Read
+      // `selected` functionally so this stays correct across reloads without
+      // re-creating the callback on every change.
+      if (withHtml.length > 0) {
+        setSelected(prev => {
+          if (!prev) selectRun(withHtml[0])
+          return prev
+        })
+      }
+    } catch {}
+  }, [selectRun])
+
+  useEffect(() => { load() }, [load])
+
+  const remove = useCallback(async (runId) => {
+    try {
+      await deleteRun(runId)
+    } catch {}
+    setRuns(prev => prev.filter(r => r.run_id !== runId))
+    setSelected(prev => {
+      if (prev?.run_id === runId) {
+        setHtml('')
+        setHistory(null)
+        return null
+      }
+      return prev
+    })
+  }, [])
+
+  return { runs, selected, html, history, loading, selectRun, remove, reload: load }
 }

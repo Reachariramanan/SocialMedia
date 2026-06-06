@@ -10,6 +10,7 @@ import useDiscover from './hooks/useDiscover'
 import useFeeds from './hooks/useFeeds'
 import useSystemStatus from './hooks/useSystemStatus'
 import useCommandPalette from './hooks/useCommandPalette'
+import useSchedules from './hooks/useSchedules'
 
 export default function App() {
   const snap = useSnapshot()
@@ -18,14 +19,23 @@ export default function App() {
   const discover = useDiscover()
   const feeds = useFeeds()
   const systemStatus = useSystemStatus()
+  const schedules = useSchedules()
 
-  // Left pane mode: 'reports' | 'discover'
+  // Left pane mode: 'reports' | 'discover' | 'schedules'
   const [mode, setMode] = useState('reports')
   // Active query shown in discover panel header
   const [activeQuery, setActiveQuery] = useState('')
 
   // Settings panel
   const [settingsOpen, setSettingsOpen] = useState(false)
+  // Active report skill — persisted to localStorage so it survives page refresh
+  const [activeSkill, setActiveSkill] = useState(
+    () => localStorage.getItem('z-report-skill') || 'html_report_writer'
+  )
+  const handleSkillChange = (skillId) => {
+    setActiveSkill(skillId)
+    localStorage.setItem('z-report-skill', skillId)
+  }
 
   // Apply persisted theme on first mount
   useEffect(() => {
@@ -83,13 +93,17 @@ export default function App() {
         html={runsHook.html}
         runHistory={runsHook.history}
         onSelectRun={runsHook.selectRun}
+        onDeleteRun={runsHook.remove}
+        reloadRuns={runsHook.reload}
         runsLoading={runsHook.loading}
         agentRun={agentRun}
+        activeSkill={activeSkill}
         discover={discover}
         feeds={feeds}
         systemStatus={systemStatus}
         onTagClick={handleTagClick}
         activeQuery={activeQuery}
+        schedules={schedules}
       />
       <CommandPalette
         isOpen={palette.isOpen}
@@ -102,7 +116,13 @@ export default function App() {
         selectLocation={palette.selectLocation}
         onSelectRun={runsHook.selectRun}
       />
-      {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
+      {settingsOpen && (
+        <SettingsPanel
+          onClose={() => setSettingsOpen(false)}
+          activeSkill={activeSkill}
+          onSkillChange={handleSkillChange}
+        />
+      )}
     </div>
   )
 }

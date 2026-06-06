@@ -10,6 +10,7 @@ from tools.extraction_normalization_tool.normalization_agent import Normalizatio
 from tools.deduplication_tool.deduplication_agent import DeduplicationAgent
 from tools.persistence_tool.persistence_agent import PersistenceAgent
 from tools.monitoring_telemetry_tool.monitoring_agent import MonitoringAgent
+from tools.tweetxtract_tool.tweetxtract_agent import TweetXtract
 from core.utils.queue import QueueSystem
 from core.utils.common import setup_logging
 from core.utils.tor_control import renew_tor_identity
@@ -40,6 +41,16 @@ async def run_monitoring_agent():
     while True:
         await asyncio.sleep(60) # Keep the server running
 
+async def run_tweetxtract_agent(query: str, limit: int):
+    logger.info(f"Running TweetXtract for query='{query}' limit={limit}")
+    xtract = TweetXtract()
+    result = await xtract.run(query, limit)
+    path = xtract.save_results(result)
+    logger.info(
+        f"TweetXtract done: {result['total_discovered']} discovered, "
+        f"{result['extraction_success']} extracted. Saved to {path}"
+    )
+
 async def run_tor_renewal_agent():
     logger.info("Testing Tor identity renewal...")
     success = await renew_tor_identity()
@@ -50,7 +61,9 @@ async def run_tor_renewal_agent():
 
 async def main():
     parser = argparse.ArgumentParser(description="Run X/Twitter Intelligence System Agents")
-    parser.add_argument("--agent", type=str, help="Specify which agent to run (discovery, rss, fetch, monitor, tor_renew)")
+    parser.add_argument("--agent", type=str, help="Specify which agent to run (discovery, rss, fetch, monitor, tor_renew, tweetxtract)")
+    parser.add_argument("--query", type=str, default="#AI", help="Query/hashtag for tweetxtract (e.g., '#AI')")
+    parser.add_argument("--limit", type=int, default=10, help="Max tweets to discover for tweetxtract")
     args = parser.parse_args()
 
     if args.agent == "discovery":
@@ -61,12 +74,14 @@ async def main():
         await run_browser_fetch_agent()
     elif args.agent == "monitor":
         await run_monitoring_agent()
+    elif args.agent == "tweetxtract":
+        await run_tweetxtract_agent(args.query, args.limit)
     elif args.agent == "tor_renew":
         # This agent is meant to be run within the docker-compose environment
         # where the tor-proxy service is accessible.
         await run_tor_renewal_agent()
     else:
-        logger.info("No agent specified. Please use --agent [discovery|rss|fetch|monitor|tor_renew]")
+        logger.info("No agent specified. Please use --agent [discovery|rss|fetch|monitor|tor_renew|tweetxtract]")
 
 if __name__ == "__main__":
     asyncio.run(main())

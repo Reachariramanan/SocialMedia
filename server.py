@@ -53,10 +53,16 @@ def static_files(fn):
 @app.route('/api/snapshot')
 def api_snapshot():
     p = os.path.join(DATA_DIR, 'latest_snapshot.json')
-    if not os.path.exists(p):
+    if os.path.exists(p):
+        with open(p, 'r', encoding='utf-8') as f:
+            return Response(f.read(), mimetype='application/json')
+    if not SCRAPE_OK:
         abort(404)
-    with open(p, 'r', encoding='utf-8') as f:
-        return Response(f.read(), mimetype='application/json')
+    try:
+        data = scrape_trends24('worldwide', '')
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/report')
 def api_report():
@@ -160,8 +166,11 @@ def parse_timestamp(raw):
         return None
 
 def scrape_trends24(country: str, city: str):
-    slug = f"{country.lower().replace(' ', '-')}/{city.lower().replace(' ', '-')}/" if city else f"{country.lower().replace(' ', '-')}/"
-    url = f"https://trends24.in/{slug}"
+    if not country or country.lower() == 'worldwide':
+        url = 'https://trends24.in/'
+    else:
+        slug = f"{country.lower().replace(' ', '-')}/{city.lower().replace(' ', '-')}/" if city else f"{country.lower().replace(' ', '-')}/"
+        url = f"https://trends24.in/{slug}"
 
     resp = httpx.get(url, headers=HEADERS, timeout=20, follow_redirects=True)
     resp.raise_for_status()
@@ -276,7 +285,25 @@ def _is_status_url(url: str) -> bool:
         return False
     return bool(_STATUS_URL_PATTERN.search(url))
 
+def _classify_url(url: str) -> str:
+    """Return 'x', 'facebook', or 'web' for a URL."""
+    try:
+        host = url.split('/')[2].lower().lstrip('www.')
+    except IndexError:
+        return 'web'
+    if 'twitter.com' in host or host == 'x.com':
+        return 'x'
+    if 'facebook.com' in host or 'fb.com' in host:
+        return 'facebook'
+    return 'web'
+
+
 async def _run_discovery(keywords: list, limit: int) -> dict:
+    import sys, os as _os
+    sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), 'ecosystem', 'tools-impl'))
+    import websearch_general as _wg
+    import facebook_search as _fb
+
     discovery = AdvancedDiscoveryAgent()
     rss = RSSIngestion()
     dedup = DeduplicationAgent()
@@ -296,12 +323,16 @@ async def _run_discovery(keywords: list, limit: int) -> dict:
         '"{kw}" site:x.com',
     ]
 
+    unresponsive_engines = {}
     for kw in keywords:
-        # SearXNG patterns
         for pattern in queries_per_kw:
             query = pattern.replace('{kw}', kw)
             found = await discovery.search_searxng(query)
             all_found.extend(found)
+            for entry in (discovery.last_unresponsive or []):
+                name = entry[0] if isinstance(entry, (list, tuple)) and entry else str(entry)
+                reason = entry[1] if isinstance(entry, (list, tuple)) and len(entry) > 1 else ''
+                unresponsive_engines[name] = reason
 
         # RSS
         rss_found = await rss.fetch_rss(kw)
@@ -310,20 +341,69 @@ async def _run_discovery(keywords: list, limit: int) -> dict:
     # Dedup
     unique = [t for t in all_found if not dedup.is_duplicate(t.tweet_url)]
 
-    # Filter to status URLs only
+    # Filter to X/Twitter status URLs for the X bucket (existing behaviour)
     status_only = [t for t in unique if _is_status_url(t.tweet_url)]
+    prioritized = prioritizer.process_discovered_tweets(status_only)[:limit]
 
-    # Prioritize
-    prioritized = prioritizer.process_discovered_tweets(status_only)
-
-    # Cap at limit
-    prioritized = prioritized[:limit]
-
-    # Count by source
     src_counts = {}
     for t in prioritized:
-        src = t.discovered_from
-        src_counts[src] = src_counts.get(src, 0) + 1
+        src_counts[t.discovered_from] = src_counts.get(t.discovered_from, 0) + 1
+
+    degraded = len(prioritized) == 0 and bool(unresponsive_engines)
+
+    x_urls = [
+        {
+            'url': t.tweet_url,
+            'discovered_from': t.discovered_from,
+            'query': t.query,
+            'score': round(prioritizer.calculate_priority(t), 2),
+            'discovered_at': t.timestamp.isoformat(),
+            'platform': 'x',
+        }
+        for t in prioritized
+    ]
+
+    # Facebook bucket via facebook_search tool (sync, run in thread executor)
+    kw_str = ','.join(keywords)
+    try:
+        fb_data = await asyncio.get_event_loop().run_in_executor(
+            None, lambda: _fb.run(kw_str, limit=40)
+        )
+        fb_urls = [
+            {
+                'url': r['url'],
+                'title': r.get('title', ''),
+                'content': r.get('content', ''),
+                'score': r.get('score', 0),
+                'discovered_from': 'searxng-facebook',
+                'platform': 'facebook',
+                'keyword': r.get('keyword', ''),
+            }
+            for r in fb_data.get('results', [])
+        ]
+    except Exception:
+        fb_urls = []
+
+    # General web bucket (no site: filter, excludes X/FB)
+    try:
+        web_query = ' OR '.join(keywords)
+        web_data = await asyncio.get_event_loop().run_in_executor(
+            None, lambda: _wg.run(web_query, limit=40)
+        )
+        web_urls = [
+            {
+                'url': r['url'],
+                'title': r.get('title', ''),
+                'content': r.get('content', ''),
+                'score': r.get('score', 0),
+                'discovered_from': 'searxng-web',
+                'platform': _classify_url(r['url']),
+            }
+            for r in web_data.get('results', [])
+            if _classify_url(r['url']) == 'web'  # only non-social results here
+        ]
+    except Exception:
+        web_urls = []
 
     return {
         'keywords': keywords,
@@ -332,16 +412,18 @@ async def _run_discovery(keywords: list, limit: int) -> dict:
         'raw_discovered': len(all_found),
         'after_dedup': len(unique),
         'sources': src_counts,
-        'urls': [
-            {
-                'url': t.tweet_url,
-                'discovered_from': t.discovered_from,
-                'query': t.query,
-                'score': round(prioritizer.calculate_priority(t), 2),
-                'discovered_at': t.timestamp.isoformat(),
-            }
-            for t in prioritized
-        ]
+        'degraded': degraded,
+        'unresponsive_engines': [
+            {'engine': name, 'reason': reason} for name, reason in unresponsive_engines.items()
+        ],
+        # legacy flat list kept for backward compat
+        'urls': x_urls,
+        # per-platform buckets for the tabbed UI
+        'buckets': {
+            'x': x_urls,
+            'facebook': fb_urls,
+            'web': web_urls,
+        },
     }
 
 
@@ -400,18 +482,42 @@ except ImportError as _agent_err:
     AGENT_OK = False
     _agent_err_msg = str(_agent_err)
 
+try:
+    from agent_runtime.llm import make_llm_client
+    CHAT_LLM_OK = True
+except ImportError as _chat_err:
+    CHAT_LLM_OK = False
+    _chat_err_msg = str(_chat_err)
+
 _agent_runs: dict = {}   # run_id -> {status, result, thread}
 
 
-def _execute_run(run_id: str, topic: str):
+_VALID_SKILLS = {
+    'html_report_writer', 'bulletin_board', 'uncle_prompt',
+    'intelligent_guy', 'smallboy', 'smallboywithbrains',
+}
+
+
+def _execute_run(run_id: str, topic: str, skill: str = 'html_report_writer'):
     _agent_runs[run_id]['status'] = 'running'
     try:
-        result = run_news_session(topic, run_id=run_id)
+        result = run_news_session(topic, run_id=run_id, skill=skill)
         _agent_runs[run_id]['status'] = 'done'
         _agent_runs[run_id]['result'] = result
     except Exception as exc:
         _agent_runs[run_id]['status'] = 'error'
         _agent_runs[run_id]['error'] = str(exc)
+
+
+def _launch_agent_run(topic: str, skill: str = 'html_report_writer') -> str:
+    """Queue a news-session agent run in a background thread. Returns the run_id."""
+    import threading
+    run_id = str(time.time_ns())[:12]
+    _agent_runs[run_id] = {'status': 'queued', 'result': None, 'error': None, 'topic': topic, 'skill': skill}
+    t = threading.Thread(target=_execute_run, args=(run_id, topic, skill), daemon=True)
+    _agent_runs[run_id]['thread'] = t
+    t.start()
+    return run_id
 
 
 @app.route('/api/agent/run', methods=['POST'])
@@ -422,13 +528,11 @@ def api_agent_run():
     topic = (body.get('topic') or '').strip()
     if not topic:
         topic = 'today\'s top trending news'
-    run_id = str(time.time_ns())[:12]
-    _agent_runs[run_id] = {'status': 'queued', 'result': None, 'error': None, 'topic': topic}
-    import threading
-    t = threading.Thread(target=_execute_run, args=(run_id, topic), daemon=True)
-    _agent_runs[run_id]['thread'] = t
-    t.start()
-    return jsonify({'run_id': run_id, 'topic': topic, 'status': 'queued'})
+    skill = (body.get('skill') or 'html_report_writer').strip()
+    if skill not in _VALID_SKILLS:
+        skill = 'html_report_writer'
+    run_id = _launch_agent_run(topic, skill=skill)
+    return jsonify({'run_id': run_id, 'topic': topic, 'skill': skill, 'status': 'queued'})
 
 
 @app.route('/api/agent/status/<run_id>')
@@ -439,7 +543,7 @@ def api_agent_status(run_id):
     result = run.get('result') or {}
     return jsonify({
         'run_id': run_id,
-        'status': run['status'],
+        'status': run.get('status'),
         'topic': run.get('topic'),
         'rounds': result.get('rounds'),
         'success': result.get('success'),
@@ -520,11 +624,185 @@ def api_run_history(run_id):
         return Response(f.read(), mimetype='application/json')
 
 
+@app.route('/api/runs/<run_id>/status')
+def api_run_status(run_id):
+    target = _safe_run_dir(run_id)
+    if not target:
+        abort(404)
+    p = os.path.join(target, 'status.json')
+    if not os.path.exists(p):
+        abort(404)
+    with open(p, 'r', encoding='utf-8') as f:
+        return Response(f.read(), mimetype='application/json')
+
+
+@app.route('/api/runs/<run_id>/partial_history')
+def api_run_partial_history(run_id):
+    target = _safe_run_dir(run_id)
+    if not target:
+        abort(404)
+    for fname in ('partial_history.json', 'history.json'):
+        p = os.path.join(target, fname)
+        if os.path.exists(p):
+            with open(p, 'r', encoding='utf-8') as f:
+                return Response(f.read(), mimetype='application/json')
+    return jsonify([])
+
+
+def _safe_run_dir(run_id: str):
+    """Resolve data/runs/<run_id>, guarding against path traversal. Returns abs path or None."""
+    runs_dir = os.path.abspath(os.path.join(DATA_DIR, 'runs'))
+    target = os.path.abspath(os.path.join(runs_dir, run_id))
+    if os.path.commonpath([runs_dir, target]) != runs_dir or target == runs_dir:
+        return None
+    return target
+
+
+def _delete_run(run_id: str) -> bool:
+    """Delete a run's data/runs/<run_id> directory. Returns True if removed."""
+    import shutil
+    target = _safe_run_dir(run_id)
+    if not target or not os.path.isdir(target):
+        return False
+    shutil.rmtree(target)
+    _agent_runs.pop(run_id, None)
+    return True
+
+
+@app.route('/api/runs/<run_id>', methods=['DELETE'])
+def api_run_delete(run_id):
+    target = _safe_run_dir(run_id)
+    if not target or not os.path.isdir(target):
+        abort(404)
+    if not _delete_run(run_id):
+        abort(404)
+    return jsonify({'ok': True, 'run_id': run_id})
+
+
+# ── Chat dock (Q&A over reports + commands) ────────────────────────────────────
+
+def _report_text(run_id: str, max_chars: int = 8000) -> str:
+    """Load a run's report.html and strip it to plain text for LLM context."""
+    target = _safe_run_dir(run_id)
+    if not target:
+        return ""
+    p = os.path.join(target, 'report.html')
+    if not os.path.exists(p):
+        return ""
+    with open(p, 'r', encoding='utf-8') as f:
+        raw = f.read()
+    if SCRAPE_OK:
+        text = BeautifulSoup(raw, 'html.parser').get_text(separator=' ')
+    else:
+        text = re.sub(r'<[^>]+>', ' ', raw)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text[:max_chars]
+
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    body = request.get_json(silent=True) or {}
+    message = (body.get('message') or '').strip()
+    run_id = (body.get('run_id') or '').strip() or None
+    if not message:
+        return jsonify({'type': 'error', 'text': 'Empty message.'}), 400
+
+    lowered = message.lower()
+
+    # ── Command: generate a report ──
+    if lowered.startswith(('generate', 'report on', 'create a report', 'new report')):
+        if not AGENT_OK:
+            return jsonify({'type': 'error', 'text': 'Agent runtime not available.'}), 500
+        # Strip the command verb to get the topic.
+        topic = re.sub(r'^(generate( a)?( report( on| about)?)?|report on|create a report( on| about)?|new report( on| about)?)\s*',
+                       '', message, flags=re.IGNORECASE).strip()
+        if not topic:
+            topic = "today's top trending news"
+        new_run_id = _launch_agent_run(topic)
+        return jsonify({
+            'type': 'command', 'action': 'generate', 'run_id': new_run_id, 'topic': topic,
+            'text': f'Generating a report on "{topic}"… it will appear in the list shortly.',
+        })
+
+    # ── Command: delete a report (the one in context) ──
+    if lowered.startswith('delete') or lowered.startswith('remove'):
+        if not run_id:
+            return jsonify({'type': 'error', 'text': 'Select a report first, then ask to delete it.'}), 400
+        if _delete_run(run_id):
+            return jsonify({'type': 'command', 'action': 'delete', 'run_id': run_id,
+                            'text': 'Report deleted.'})
+        return jsonify({'type': 'error', 'text': 'Could not delete that report.'}), 404
+
+    # ── Free-form Q&A over the selected report ──
+    if not CHAT_LLM_OK:
+        return jsonify({'type': 'error', 'text': 'Chat LLM not available.'}), 500
+
+    context = _report_text(run_id) if run_id else ''
+    if context:
+        system = ("You are an assistant answering questions about an intelligence report. "
+                  "Answer concisely using only the report content. If the answer is not in "
+                  "the report, say so.")
+        user = f"REPORT CONTENT:\n{context}\n\nQUESTION: {message}"
+    else:
+        system = ("You are a concise assistant for an intelligence-reporting tool. "
+                  "No report is currently selected; answer the user's question briefly, "
+                  "and suggest they select or generate a report for report-specific questions.")
+        user = message
+
+    try:
+        client = make_llm_client(temperature=0.3)
+        resp = client.generate(messages=[
+            {'role': 'system', 'content': system},
+            {'role': 'user', 'content': user},
+        ])
+        answer = (getattr(resp, 'content', '') or '').strip()
+        return jsonify({'type': 'answer', 'text': answer or '(no response)'})
+    except Exception as exc:
+        return jsonify({'type': 'error', 'text': f'LLM error: {exc}'}), 500
+
+
 @app.route('/api/agent/scheduler')
 def api_scheduler_status():
     if not AGENT_OK:
         return jsonify({'available': False})
     return jsonify({'available': True, 'scheduler': _scheduler.get_state()})
+
+
+# ── User-defined schedules (recurring + one-time) ──────────────────────────────
+
+@app.route('/api/schedules', methods=['GET'])
+def api_schedules_list():
+    if not AGENT_OK:
+        return jsonify({'error': 'agent_runtime not available', 'detail': _agent_err_msg}), 500
+    return jsonify(_scheduler.list_schedules())
+
+
+@app.route('/api/schedules', methods=['POST'])
+def api_schedules_create():
+    if not AGENT_OK:
+        return jsonify({'error': 'agent_runtime not available', 'detail': _agent_err_msg}), 500
+    body = request.get_json(silent=True) or {}
+    try:
+        sched = _scheduler.add_schedule(
+            topic=body.get('topic'),
+            type=(body.get('type') or '').strip(),
+            interval_sec=body.get('interval_sec'),
+            run_at=body.get('run_at'),
+        )
+    except ValueError as exc:
+        return jsonify({'error': str(exc)}), 400
+    except OSError as exc:
+        return jsonify({'error': f'Could not save schedule (storage not writable): {exc}'}), 500
+    return jsonify(sched), 201
+
+
+@app.route('/api/schedules/<schedule_id>', methods=['DELETE'])
+def api_schedules_delete(schedule_id):
+    if not AGENT_OK:
+        return jsonify({'error': 'agent_runtime not available', 'detail': _agent_err_msg}), 500
+    if not _scheduler.delete_schedule(schedule_id):
+        abort(404)
+    return jsonify({'ok': True, 'id': schedule_id})
 
 
 if __name__ == '__main__':

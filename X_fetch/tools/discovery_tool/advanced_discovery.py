@@ -11,14 +11,20 @@ logger = setup_logging("AdvancedDiscoveryAgent")
 class AdvancedDiscoveryAgent:
     def __init__(self):
         self.searxng_url = settings.SEARXNG_URL
-        self.engines = "google,bing,duckduckgo"
+        # Engines are selected in SearXNG's own config; querying by category is
+        # more reliable than an `engines=` allowlist that may name engines that
+        # aren't enabled server-side (which silently returns nothing).
+        self.categories = "general"
+        # Engines reported by SearXNG as unresponsive on the most recent call
+        # (e.g. CAPTCHA / rate-limited). Surfaced so callers can show a degraded state.
+        self.last_unresponsive = []
 
-    async def search_searxng(self, query: str, time_range: str = None) -> List[DiscoveredTweet]:
-        logger.info(f"Searching SearXNG for: {query} (Time Range: {time_range})")
+    async def search_searxng(self, query: str, time_range: str = None, tweets_only: bool = True) -> List[DiscoveredTweet]:
+        logger.info(f"Searching SearXNG for: {query} (Time Range: {time_range}, Tweets Only: {tweets_only})")
         params = {
             "q": query,
             "format": "json",
-            "engines": self.engines,
+            "categories": self.categories,
         }
         if time_range:
             params["time_range"] = time_range
@@ -28,18 +34,27 @@ class AdvancedDiscoveryAgent:
                 response = await client.get(f"{self.searxng_url}/search", params=params)
                 response.raise_for_status()
                 data = response.json()
+
+                unresponsive = data.get("unresponsive_engines") or []
+                self.last_unresponsive = unresponsive
+                if unresponsive:
+                    logger.warning(f"SearXNG unresponsive engines: {unresponsive}")
+
                 results = []
                 for result in data.get("results", []):
-                    if "x.com" in result["url"] or "twitter.com" in result["url"]:
-                        results.append(DiscoveredTweet(
-                            tweet_url=result["url"],
-                            discovered_from="SearXNG",
-                            query=query,
-                            timestamp=datetime.now()
-                        ))
+                    url = result.get("url", "")
+                    if tweets_only and "x.com" not in url and "twitter.com" not in url:
+                        continue
+                    results.append(DiscoveredTweet(
+                        tweet_url=url,
+                        discovered_from="SearXNG",
+                        query=query,
+                        timestamp=datetime.now()
+                    ))
                 return results
             except Exception as e:
                 logger.error(f"SearXNG search failed: {e}")
+                self.last_unresponsive = [["searxng", str(e)]]
                 return []
 
     async def temporal_slicing_discovery(self, keyword: str, days: int = 30):

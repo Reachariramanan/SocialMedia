@@ -21,20 +21,20 @@ class VLLMClient(BaseLLMClient):
     def __init__(
         self,
         model_name: str,
-        base_url: str = "http://localhost:8000",
+        base_url: str = "http://192.168.200.23:11642/v1",
         **kwargs
     ):
         """
         Initialize vLLM client.
-        
+
         Args:
             model_name: Model name (must be loaded in vLLM server)
-            base_url: vLLM server URL (defaults to http://localhost:8000)
+            base_url: vLLM server URL (defaults to http://192.168.200.23:11642/v1)
             **kwargs: Additional configuration
         """
         # Use default URL if empty string is provided
         if not base_url or base_url.strip() == "":
-            base_url = "http://localhost:8000"
+            base_url = "http://192.168.200.23:11642/v1"
         super().__init__(model_name, base_url, **kwargs)
         self._model_info_cache: Optional[Dict[str, Any]] = None
         self._model_info_cache_ts: float = 0.0
@@ -62,7 +62,7 @@ class VLLMClient(BaseLLMClient):
             return self._model_info_cache
         
         try:
-            url = f"{self.base_url}/v1/models"
+            url = f"{self.base_url}/models"
             response = self._session.get(url, timeout=(5, 10))
             response.raise_for_status()
             

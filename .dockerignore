@@ -1,0 +1,13 @@
+data/
+node_modules/
+ui_react/node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.git/
+*.log
+searxng-data/
+.claude/
+.qwen/

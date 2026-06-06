@@ -1,11 +1,11 @@
-"""Direct SearXNG JSON search tool."""
+"""General web search via SearXNG — no site: filter, broad results."""
 import os
 import httpx
 
 SEARXNG_URL = os.getenv("SEARXNG_URL", "http://localhost:8888")
 
 
-def run(query: str, engines: str = "", categories: str = "general,news", limit: int = 200) -> dict:
+def run(query: str, categories: str = "general,news", limit: int = 50) -> dict:
     all_results = []
     page = 1
 
@@ -18,9 +18,6 @@ def run(query: str, engines: str = "", categories: str = "general,news", limit: 
                 "categories": categories,
                 "pageno": page,
             }
-            if engines:
-                params["engines"] = engines
-
             resp = httpx.get(
                 f"{SEARXNG_URL}/search",
                 params=params,

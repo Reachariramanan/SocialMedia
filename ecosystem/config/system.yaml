@@ -3,8 +3,8 @@ version: "1.0.0"
 
 llm:
   provider: vllm
-  model: qwen3-6-27b
-  base_url: "${VLLM_BASE_URL:-http://192.168.200.46:11449/v1}"
+  model: qwen36-35b
+  base_url: "${VLLM_BASE_URL:-http://192.168.200.23:11642/v1}"
   temperature: 0.4
 
 memory:

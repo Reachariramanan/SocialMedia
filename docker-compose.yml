@@ -48,6 +48,31 @@ services:
     depends_on:
       - tor
 
+  flask-server:
+    build: .
+    container_name: socialmedia-server
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - FLASK_ENV=production
+      - SEARXNG_URL=http://searxng:8080
+      - AGENT_SCHEDULER=true
+      - AGENT_SCHEDULER_TICK_SEC=30
+      - AGENT_DEFAULT_TOPIC=today's top trending news India worldwide
+      - AGENT_RUN_INTERVAL_SEC=300
+      - AGENT_OK=true
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./ui_react/dist:/app/ui_react/dist
+    depends_on:
+      - searxng
+      - lightpanda
+      - tor
+    networks:
+      - scrape-net
+
 networks:
   scrape-net:
     driver: bridge
