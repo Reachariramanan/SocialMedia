@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import {
   FileText, Compass, Download, Eye, EyeOff,
-  Cpu, RefreshCw, Search, X as XIcon, Rss, Trash2, Clock, Globe,
+  Cpu, RefreshCw, Search, X as XIcon, Rss, Trash2, Clock, Globe, Braces,
 } from 'lucide-react'
 import AgentTrace from './shared/AgentTrace'
 import SchedulesPanel from './SchedulesPanel'
@@ -170,10 +170,120 @@ function SearxngTabbedBlock({ discResults, discLoading }) {
   )
 }
 
+// ─── Xtraction scraped-tweet card ─────────────────────────────
+function XtractionCard({ post }) {
+  const [open, setOpen] = useState(false)
+  const timeStr = post.created_at
+    ? new Date(post.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+    : post.author?.horse || ''
+
+  return (
+    <div style={{
+      background: 'var(--depth-2)', border: '1px solid var(--border)',
+      borderRadius: 'var(--radius-sm)', padding: '10px 12px',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+        {post.author?.profile_image_url && (
+          <img
+            src={post.author.profile_image_url}
+            alt=""
+            style={{ width: 20, height: 20, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+            onError={e => { e.target.style.display = 'none' }}
+          />
+        )}
+        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--signal-cyan)' }}>
+          @{post.author?.username || '—'}
+        </span>
+        {post.author?.verified && (
+          <span style={{ fontSize: 9, color: '#1d9bf0' }}>✓</span>
+        )}
+        <span style={{ fontSize: 10, color: 'var(--text-muted)', marginLeft: 'auto' }}>
+          {timeStr}
+        </span>
+        <button
+          onClick={() => setOpen(o => !o)}
+          title="Toggle raw JSON"
+          style={{
+            background: open ? 'rgba(6,182,212,0.15)' : 'var(--depth-1)',
+            border: '1px solid var(--border)', borderRadius: 4,
+            padding: '2px 6px', cursor: 'pointer', fontSize: 10,
+            color: open ? 'var(--signal-cyan)' : 'var(--text-muted)',
+            display: 'flex', alignItems: 'center', gap: 3,
+          }}
+        >
+          <Braces size={10} /> {'{ }'}
+        </button>
+      </div>
+      <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+        {post.text}
+      </div>
+      {post._meta?.post_url && (
+        <div style={{ marginTop: 4 }}>
+          <a href={post._meta.post_url} target="_blank" rel="noreferrer"
+            style={{ fontSize: 10, color: 'var(--signal-blue)', wordBreak: 'break-all' }}>
+            {post._meta.post_url}
+          </a>
+        </div>
+      )}
+      <div style={{ display: 'flex', gap: 10, marginTop: 6, fontSize: 10, color: 'var(--text-muted)' }}>
+        <span>💬 {post.public_metrics?.reply_count || 0}</span>
+        <span>🔁 {post.public_metrics?.retweet_count || 0}</span>
+        <span>❤ {post.public_metrics?.like_count || 0}</span>
+        <span>🔖 {post.public_metrics?.bookmark_count || 0}</span>
+      </div>
+      {open && (
+        <pre style={{
+          marginTop: 8, padding: 8, background: 'var(--depth-0)',
+          border: '1px solid var(--border)', borderRadius: 4,
+          fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)',
+          overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+          maxHeight: 300, overflowY: 'auto',
+        }}>
+          {JSON.stringify(post, null, 2)}
+        </pre>
+      )}
+    </div>
+  )
+}
+
+function XtractionSection({ xtraction }) {
+  const { posts, loading, refresh } = xtraction || {}
+  const count = posts?.length || 0
+
+  return (
+    <div className="discover-source-section">
+      <div className="discover-source-header">
+        <Braces size={12} style={{ color: 'var(--signal-cyan)' }} />
+        <span className="discover-source-label" style={{ color: 'var(--signal-cyan)' }}>
+          Xtraction
+        </span>
+        <span className="discover-source-count">{count} scraped</span>
+        <button
+          onClick={refresh}
+          title="Refresh"
+          style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0 2px' }}
+        >
+          <RefreshCw size={11} />
+        </button>
+      </div>
+      <div className="discover-source-body">
+        {loading && <span className="muted">Loading…</span>}
+        {!loading && count === 0 && (
+          <span className="muted">No scraped tweets yet — use the Xtraction Chrome extension on x.com</span>
+        )}
+        {!loading && posts?.map((post, i) => (
+          <XtractionCard key={post.id || i} post={post} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Discover panel ───────────────────────────────────────────
-function DiscoverPanel({ discover, feeds, activeQuery }) {
+function DiscoverPanel({ discover, feeds, xtraction, activeQuery }) {
   const { input, setInput, results: discResults, loading: discLoading, error: discErr, doDiscover } = discover
   const { results: feedResults, loading: feedLoading, error: feedErr, doFetch } = feeds
+
 
   const feedTags = feedResults ? Object.entries(feedResults.feeds || {}) : []
 
@@ -249,6 +359,9 @@ function DiscoverPanel({ discover, feeds, activeQuery }) {
 
         {/* SearXNG tabbed: X / Facebook / Web */}
         <SearxngTabbedBlock discResults={discResults} discLoading={discLoading} />
+
+        {/* Xtraction: Chrome extension scraped tweets */}
+        <XtractionSection xtraction={xtraction} />
       </div>
     </div>
   )
@@ -518,6 +631,7 @@ export default function LeftPane({
   activeSkill,
   discover,
   feeds,
+  xtraction,
   activeQuery,
   schedules,
 }) {
@@ -589,6 +703,7 @@ export default function LeftPane({
         <DiscoverPanel
           discover={discover}
           feeds={feeds}
+          xtraction={xtraction}
           activeQuery={activeQuery}
         />
       )}

@@ -347,9 +347,10 @@ Bot CLI options:
 All infrastructure services are containerized via Docker Compose:
 
 ```bash
-docker compose up -d    # Start all services
-docker compose down      # Stop all services
-docker compose ps        # Check service status
+docker compose up -d --build  # Build the changes 
+docker compose up -d          # Start all services
+docker compose down           # Stop all services
+docker compose ps             # Check service status
 ```
 
 Each service is connected to the `scrape-net` bridge network for internal communication.

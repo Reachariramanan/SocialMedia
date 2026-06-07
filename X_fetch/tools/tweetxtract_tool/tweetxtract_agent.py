@@ -15,7 +15,7 @@ from tools.discovery_tool.advanced_discovery import AdvancedDiscoveryAgent
 from tools.discovery_tool.rss_ingestion import RSSIngestion
 from tools.deduplication_tool.deduplication_agent import DeduplicationAgent
 from tools.url_prioritization_tool.prioritization_agent import URLPrioritizationAgent
-from tools.extraction_tool.torpanda_extractor import extract_from_urls
+from tools.Xtraction_tool.torpanda_extractor import extract_from_urls
 from core.utils.common import setup_logging
 
 from .html_cleaner import clean_html

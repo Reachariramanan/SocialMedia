@@ -362,6 +362,7 @@ async def _run_discovery(keywords: list, limit: int) -> dict:
         }
         for t in prioritized
     ]
+    x_urls.sort(key=lambda u: u.get('discovered_at', ''), reverse=True)
 
     # Facebook bucket via facebook_search tool (sync, run in thread executor)
     kw_str = ','.join(keywords)
@@ -381,6 +382,7 @@ async def _run_discovery(keywords: list, limit: int) -> dict:
             }
             for r in fb_data.get('results', [])
         ]
+        fb_urls.sort(key=lambda u: u.get('score', 0), reverse=True)
     except Exception:
         fb_urls = []
 
@@ -402,6 +404,7 @@ async def _run_discovery(keywords: list, limit: int) -> dict:
             for r in web_data.get('results', [])
             if _classify_url(r['url']) == 'web'  # only non-social results here
         ]
+        web_urls.sort(key=lambda u: u.get('score', 0), reverse=True)
     except Exception:
         web_urls = []
 
@@ -459,6 +462,23 @@ def api_discover():
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+_xtraction_posts: list = []  # in-memory store for Chrome extension scraped tweets
+
+
+@app.route('/api/xtraction/push', methods=['POST'])
+def api_xtraction_push():
+    data = request.get_json(force=True) or {}
+    posts = data.get('posts', [])
+    _xtraction_posts.clear()
+    _xtraction_posts.extend(posts)
+    return jsonify({'ok': True, 'count': len(_xtraction_posts)})
+
+
+@app.route('/api/xtraction/posts')
+def api_xtraction_posts():
+    return jsonify({'posts': _xtraction_posts, 'count': len(_xtraction_posts)})
 
 
 @app.route('/api/xfetch/status')

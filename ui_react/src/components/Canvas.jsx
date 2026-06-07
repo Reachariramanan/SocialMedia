@@ -10,6 +10,7 @@ export default function Canvas({
   activeSkill,
   discover,
   feeds,
+  xtraction,
   systemStatus,
   onTagClick,
   activeQuery,
@@ -32,6 +33,7 @@ export default function Canvas({
         activeSkill={activeSkill}
         discover={discover}
         feeds={feeds}
+        xtraction={xtraction}
         activeQuery={activeQuery}
         schedules={schedules}
       />

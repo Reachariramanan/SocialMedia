@@ -62,6 +62,22 @@ def _clean_html(raw: str, max_chars: int = 280) -> str:
 # Google feeds
 # ---------------------------------------------------------------------------
 
+def _parse_published_dt(e: Dict[str, str]):
+    """Parse a published string into a sortable datetime (UTC). Falls back to epoch."""
+    from email.utils import parsedate_to_datetime
+    raw = e.get("published", "")
+    if raw:
+        try:
+            return parsedate_to_datetime(raw)
+        except Exception:
+            pass
+        try:
+            return datetime.fromisoformat(raw)
+        except Exception:
+            pass
+    return datetime.min.replace(tzinfo=timezone.utc)
+
+
 def _parse_feed(url: str, limit: int = 15, timeout: float = 20.0) -> List[Dict[str, str]]:
     resp = httpx.get(url, headers=HEADERS, timeout=timeout, follow_redirects=True)
     resp.raise_for_status()
@@ -75,6 +91,7 @@ def _parse_feed(url: str, limit: int = 15, timeout: float = 20.0) -> List[Dict[s
             "source": item.get("source", {}).get("title", "") if hasattr(item.get("source", ""), "get") else "",
             "summary": _clean_html(item.get("summary", "")),
         })
+    entries.sort(key=_parse_published_dt, reverse=True)
     return entries
 
 
@@ -209,6 +226,7 @@ def _try_searxng_tweets(hashtag: str, limit: int, timeout: float) -> Optional[Li
         if r["link"] not in seen:
             seen.add(r["link"])
             unique.append(r)
+    unique.sort(key=lambda r: r.get("published", ""), reverse=True)
     return unique[:limit] if unique else None
 
 

@@ -8,6 +8,7 @@ import useAgentRun from './hooks/useAgentRun'
 import useRuns from './hooks/useRuns'
 import useDiscover from './hooks/useDiscover'
 import useFeeds from './hooks/useFeeds'
+import useXtraction from './hooks/useXtraction'
 import useSystemStatus from './hooks/useSystemStatus'
 import useCommandPalette from './hooks/useCommandPalette'
 import useSchedules from './hooks/useSchedules'
@@ -18,6 +19,7 @@ export default function App() {
   const agentRun = useAgentRun(useCallback(() => runsHook.reload(), [runsHook.reload]))
   const discover = useDiscover()
   const feeds = useFeeds()
+  const xtraction = useXtraction()
   const systemStatus = useSystemStatus()
   const schedules = useSchedules()
 
@@ -100,6 +102,7 @@ export default function App() {
         activeSkill={activeSkill}
         discover={discover}
         feeds={feeds}
+        xtraction={xtraction}
         systemStatus={systemStatus}
         onTagClick={handleTagClick}
         activeQuery={activeQuery}

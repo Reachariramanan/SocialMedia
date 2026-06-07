@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Radio } from 'lucide-react'
 import LensFrame from './LensFrame'
 import SignalTag from '../shared/SignalTag'
@@ -34,6 +34,13 @@ function getBlockTag(block, idx, allBlocks) {
 export default function SignalStream({ snapshot, loading, onTagClick }) {
   const [expandedIdx, setExpandedIdx] = useState(0)
   const [search, setSearch] = useState('')
+
+  // Reset filter/expansion when the location (snapshot) changes so state from the
+  // previous location doesn't carry over.
+  useEffect(() => {
+    setExpandedIdx(0)
+    setSearch('')
+  }, [snapshot?.location])
 
   const topTags = snapshot?.top_tags || []
   const blocks = snapshot?.trend_blocks || []

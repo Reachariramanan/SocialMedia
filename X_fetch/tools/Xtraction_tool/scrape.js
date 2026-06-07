@@ -69,10 +69,22 @@ async function doScrape() {
       t.classList.toggle("active", t.dataset.tab === "scraped");
     });
     renderScraped();
+    pushToDiscover(scrapedPosts);
 
   } catch (e) {
     setStatus("error", "✗ " + e.message);
   }
+}
+
+// ── Push scraped posts to local server Discover panel ──
+async function pushToDiscover(posts) {
+  try {
+    await fetch("http://localhost:5000/api/xtraction/push", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ posts }),
+    });
+  } catch (_) { /* server may not be running */ }
 }
 
 // ── This function runs INSIDE the X page tab ──
